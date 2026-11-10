@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQRUCHYO-RENAMER</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #090909;
+    color: #eeeeee;
+    min-height: 100vh;
+    padding: 35px 15px;
+}
+
+.container {
+    max-width: 650px;
+    margin: auto;
+    background: #141414;
+    padding: 28px;
+    border: 1px solid #292929;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px #00000060;
+}
+
+.header {
+    margin-bottom: 28px;
+}
+
+.header h1 {
+    font-size: 25px;
+    letter-spacing: 2px;
+    color: #ffffff;
+}
+
+.header h1 span {
+    color: #a68cff;
+}
+
+.subtitle {
+    color: #858585;
+    font-size: 13px;
+    margin-top: 9px;
+    line-height: 1.6;
+}
+
+.limit {
+    display: inline-block;
+    margin-top: 13px;
+    padding: 6px 10px;
+    border: 1px solid #57477c;
+    color: #bba8ff;
+    border-radius: 6px;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.upload {
+    display: block;
+    border: 1px dashed #555;
+    background: #1b1b1b;
+    padding: 35px 15px;
+    text-align: center;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.upload:hover, .upload.drag {
+    border-color: #a68cff;
+    background: #211d2b;
+}
+
+.symbol {
+    font-size: 36px;
+    margin-bottom: 13px;
+}
+
+.upload strong {
+    color: #b49bff;
+    font-size: 14px;
+}
+
+.upload p {
+    color: #777;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+#fileInput {
+    display: none;
+}
+
+.section {
+    margin-top: 24px;
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #eee;
+}
+
+.settings {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.field label {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    outline: none;
+    background: #202020;
+    color: white;
+    font-size: 13px;
+}
+
+input:focus {
+    border-color: #a68cff;
+}
+
+.hint {
+    color: #777;
+    font-size: 11px;
+    margin-top: 9px;
+    line-height: 1.5;
+}
+
+.info {
+    margin-top: 22px;
+    padding: 15px;
+    background: #202020;
+    border: 1px solid #303030;
+    border-radius: 9px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+#fileCount {
+    color: #b49bff;
+    font-weight: bold;
+}
+
+.progress-box {
+    display: none;
+    margin-top: 18px;
+}
+
+.progress-track {
+    height: 6px;
+    background: #303030;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 9px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #a68cff;
+    transition: width .2s;
+}
+
+#progressText {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.preview {
+    margin-top: 20px;
+    border: 1px solid #303030;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.preview-title {
+    padding: 13px;
+    background: #202020;
+    color: #ddd;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#previewList {
+    padding: 13px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 2;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+#previewList::-webkit-scrollbar {
+    width: 5px;
+}
+
+#previewList::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 22px;
+    background: #a68cff;
+    color: #100c18;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    background: #bba8ff;
+}
+
+button:disabled {
+    background: #38333f;
+    color: #777;
+    cursor: not-allowed;
+}
+
+#status {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 12px;
+    color: #b49bff;
+    line-height: 1.5;
+}
+
+.footer {
+    text-align: center;
+    color: #555;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-top: 28px;
+}
+
+@media(max-width: 450px) {
+    .container {
+        padding: 20px;
+    }
+
+    .settings {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>HQRUCHYO<span>-</span>RENAMER</h1>
+        <p class="subtitle">
+            Bulk PDF renaming tool. Rename multiple PDF files
+            automatically with sequential numbering.
+        </p>
+        <div class="limit">MAXIMUM 500 PDF FILES</div>
+    </div>
+
+    <label class="upload" id="dropArea">
+        <div class="symbol">📁</div>
+        <strong>SELECT PDF FILES</strong>
+        <p>Click here or drag and drop your files</p>
+        <p>Supported format: PDF</p>
+        <input type="file" id="fileInput"
+        accept=".pdf,application/pdf" multiple>
+    </label>
+
+    <div class="section">
+        <div class="section-title">01 / RENAME SETTINGS</div>
+
+        <div class="settings">
+
+            <div class="field">
+                <label>Prefix Name</label>
+                <input type="text" id="prefix" value="ch">
+            </div>
+
+            <div class="field">
+                <label>Starting Number</label>
+                <input type="number" id="start" value="1" min="0">
+            </div>
+
+            <div class="field">
+                <label>Number Digits</label>
+                <input type="number" id="digits" value="3" min="1" max="10">
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Example: ch001.pdf, ch002.pdf, ch003.pdf ...
+        </p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">02 / ZIP SETTINGS</div>
+
+        <div class="field">
+            <label>ZIP File Name</label>
+            <input type="text" id="zipName"
+            value="HQRUCHYO-PDF">
+        </div>
+
+        <p class="hint">
+            Choose your own ZIP download name.
+            Example: My Chapters.zip
+        </p>
+    </div>
+
+    <div class="info">
+        <span>Selected PDF Files</span>
+        <strong id="fileCount">0 / 500 PDF</strong>
+    </div>
+
+    <div class="preview">
+        <div class="preview-title">
+            03 / RENAME PREVIEW
+        </div>
+
+        <div id="previewList">
+            No PDF files selected.
+        </div>
+    </div>
+
+    <div class="progress-box" id="progressBox">
+        <div id="progressText">Preparing files...</div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <button id="downloadBtn" disabled>
+        DOWNLOAD RENAMED PDF (.ZIP)
+    </button>
+
+    <p id="status"></p>
+
+    <div class="footer">
+        HQRUCHYO-RENAMER © 2026
+    </div>
+
+</div>
+
+<script>
+
+const fileInput = document.getElementById("fileInput");
+const dropArea = document.getElementById("dropArea");
+const prefixInput = document.getElementById("prefix");
+const startInput = document.getElementById("start");
+const digitsInput = document.getElementById("digits");
+const zipNameInput = document.getElementById("zipName");
+const previewList = document.getElementById("previewList");
+const fileCount = document.getElementById("fileCount");
+const downloadBtn = document.getElementById("downloadBtn");
+const statusText = document.getElementById("status");
+const progressBox = document.getElementById("progressBox");
+const progressFill = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
+
+let files = [];
+let processing = false;
+
+function naturalSort(a, b) {
+    return a.name.localeCompare(
+        b.name,
+        undefined,
+        {
+            numeric: true,
+            sensitivity: "base"
+        }
+    );
+}
+
+function setFiles(selectedFiles) {
+
+    const allFiles = Array.from(selectedFiles)
+        .filter(file =>
+            file.name.toLowerCase().endsWith(".pdf")
+        )
+        .sort(naturalSort);
+
+    if (allFiles.length > 500) {
+
+        files = allFiles.slice(0, 500);
+
+        statusText.textContent =
+            "LIMIT EXCEEDED! Only the first 500 PDF files are selected.";
+
+    } else {
+
+        files = allFiles;
+        statusText.textContent = "";
+
+    }
+
+    updatePreview();
+}
+
+fileInput.addEventListener("change", function() {
+    setFiles(fileInput.files);
+});
+
+dropArea.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    dropArea.classList.add("drag");
+});
+
+dropArea.addEventListener("dragleave", function() {
+    dropArea.classList.remove("drag");
+});
+
+dropArea.addEventListener("drop", function(e) {
+    e.preventDefault();
+    dropArea.classList.remove("drag");
+    setFiles(e.dataTransfer.files);
+});
+
+function getNewName(index) {
+
+    const prefix = prefixInput.value;
+    const start = parseInt(startInput.value) || 0;
+
+    const digits = Math.min(
+        10,
+        Math.max(1, parseInt(digitsInput.value) || 3)
+    );
+
+    const number = String(start + index)
+        .padStart(digits, "0");
+
+    return prefix + number + ".pdf";
+}
+
+function updatePreview() {
+
+    fileCount.textContent = files.length + " / 500 PDF";
+
+    if (files.length === 0) {
+
+        previewList.textContent = "No PDF files selected.";
+        downloadBtn.disabled = true;
+        return;
+
+    }
+
+    downloadBtn.disabled = processing;
+
+    let preview = "";
+    const limit = Math.min(files.length, 10);
+
+    for (let i = 0; i < limit; i++) {
+
+        preview += `<div>${i + 1}. ${
+            escapeHTML(getNewName(i))
+        }</div>`;
+
+    }
+
+    if (files.length > 10) {
+
+        preview += `<div>... and ${
+            files.length - 10
+        } more files.</div>`;
+
+    }
+
+    previewList.innerHTML = preview;
+}
+
+function escapeHTML(text) {
+
+    return text.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
+
+}
+
+prefixInput.addEventListener("input", updatePreview);
+startInput.addEventListener("input", updatePreview);
+digitsInput.addEventListener("input", updatePreview);
+
+downloadBtn.addEventListener("click", async function() {
+
+    if (files.length === 0 || processing) return;
+
+    if (typeof JSZip === "undefined") {
+
+        statusText.textContent =
+            "Failed to load ZIP library. Check your internet connection.";
+
+        return;
+
+    }
+
+    if (!zipNameInput.value.trim()) {
+
+        statusText.textContent =
+            "Please enter a ZIP file name.";
+
+        zipNameInput.focus();
+        return;
+
+    }
+
+    const zipName = zipNameInput.value
+        .trim()
+        .replace(/\.zip$/i, "")
+        .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
+
+    if (!zipName) {
+
+        statusText.textContent =
+            "Please enter a valid ZIP file name.";
+
+        return;
+
+    }
+
+    processing = true;
+    downloadBtn.disabled = true;
+    downloadBtn.textContent = "PROCESSING...";
+
+    progressBox.style.display = "block";
+    progressFill.style.width = "0%";
+
+    statusText.textContent = "";
+
+    try {
+
+        const zip = new JSZip();
+
+        for (let i = 0; i < files.length; i++) {
+
+            const newName = getNewName(i);
+
+            zip.file(newName, files[i]);
+
+            const percent = Math.round(
+                ((i + 1) / files.length) * 50
+            );
+
+            progressFill.style.width = percent + "%";
+
+            progressText.textContent =
+                "Adding PDF files: " + (i + 1) +
+                " / " + files.length;
+
+            if (i % 20 === 0) {
+                await new Promise(resolve =>
+                    setTimeout(resolve, 0)
+                );
+            }
+
+        }
+
+        progressText.textContent = "Creating ZIP file...";
+
+        const content = await zip.generateAsync({
+
+            type: "blob",
+
+            compression: "DEFLATE",
+
+            compressionOptions: {
+                level: 3
+            }
+
+        }, function(metadata) {
+
+            const percent = 50 +
+                Math.round(metadata.percent / 2);
+
+            progressFill.style.width = percent + "%";
+
+            progressText.textContent =
+                "Creating ZIP: " + Math.round(metadata.percent) + "%";
+
+        });
+
+        const url = URL.createObjectURL(content);
+
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = zipName + ".zip";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 60000);
+
+        progressFill.style.width = "100%";
+
+        progressText.textContent = "100% COMPLETED";
+
+        statusText.textContent =
+            "SUCCESS! " + files.length +
+            " PDF files renamed and downloaded as " +
+            zipName + ".zip";
+
+    } catch (error) {
+
+        statusText.textContent =
+            "ERROR: " + error.message;
+
+    } finally {
+
+        processing = false;
+
+        downloadBtn.disabled = files.length === 0;
+
+        downloadBtn.textContent =
+            "DOWNLOAD RENAMED PDF (.ZIP)";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
