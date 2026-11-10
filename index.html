@@ -24,7 +24,11 @@
     --purple: #a68cff;
     --purple-light: #c1adff;
     --text: #eeeeee;
-    --muted: #888;
+    --muted: #999;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -32,26 +36,26 @@ body {
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 40px 24px;
+    padding: 45px 30px;
 }
 
 .container {
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 38px;
+    padding: 50px;
     background: var(--panel);
     border: 1px solid #292929;
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: 0 15px 60px #00000070;
 }
 
 .header {
-    margin-bottom: 30px;
+    margin-bottom: 38px;
 }
 
 .header h1 {
-    font-size: clamp(25px, 3.5vw, 38px);
+    font-size: clamp(30px, 4vw, 44px);
     letter-spacing: 2px;
     font-weight: 800;
 }
@@ -62,29 +66,29 @@ body {
 
 .subtitle {
     color: var(--muted);
-    font-size: 14px;
-    line-height: 1.7;
-    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-top: 14px;
 }
 
 .limit {
     display: inline-block;
-    margin-top: 15px;
-    padding: 8px 12px;
+    margin-top: 20px;
+    padding: 10px 15px;
     border: 1px solid #57477c;
     color: var(--purple-light);
-    border-radius: 6px;
-    font-size: 11px;
+    border-radius: 7px;
+    font-size: 12px;
     letter-spacing: 1px;
 }
 
 .upload {
     display: block;
-    border: 1px dashed #555;
+    border: 2px dashed #555;
     background: #1b1b1b;
-    padding: 55px 20px;
+    padding: 75px 20px;
     text-align: center;
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
     transition: .2s;
 }
@@ -96,20 +100,20 @@ body {
 }
 
 .symbol {
-    font-size: 48px;
-    margin-bottom: 18px;
+    font-size: 60px;
+    margin-bottom: 20px;
 }
 
 .upload strong {
     color: var(--purple-light);
-    font-size: 16px;
+    font-size: 19px;
 }
 
 .upload p {
     color: var(--muted);
-    font-size: 13px;
-    margin-top: 10px;
-    line-height: 1.5;
+    font-size: 14px;
+    margin-top: 12px;
+    line-height: 1.6;
 }
 
 #fileInput {
@@ -117,39 +121,39 @@ body {
 }
 
 .section {
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
 .section-title {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: bold;
-    margin-bottom: 17px;
-    letter-spacing: .5px;
+    margin-bottom: 20px;
+    letter-spacing: .7px;
 }
 
 .settings {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 22px;
 }
 
 .field label {
     display: block;
-    font-size: 13px;
+    font-size: 15px;
     color: #aaa;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 input {
     width: 100%;
     min-width: 0;
-    padding: 15px;
+    padding: 18px;
     border: 1px solid #383838;
-    border-radius: 9px;
+    border-radius: 10px;
     outline: none;
     background: var(--input);
     color: white;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 input:focus {
@@ -158,22 +162,22 @@ input:focus {
 
 .hint {
     color: #777;
-    font-size: 12px;
-    margin-top: 12px;
-    line-height: 1.6;
+    font-size: 13px;
+    margin-top: 13px;
+    line-height: 1.7;
 }
 
 .info {
-    margin-top: 25px;
-    padding: 18px;
+    margin-top: 30px;
+    padding: 23px;
     background: #202020;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    font-size: 14px;
+    gap: 12px;
+    font-size: 16px;
 }
 
 #fileCount {
@@ -182,31 +186,31 @@ input:focus {
 }
 
 .preview {
-    margin-top: 22px;
+    margin-top: 25px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
 }
 
 .preview-title {
-    padding: 16px;
+    padding: 20px;
     background: #202020;
     color: #ddd;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 #previewList {
-    padding: 16px;
-    font-size: 13px;
+    padding: 22px;
+    font-size: 15px;
     color: #aaa;
-    line-height: 2.1;
-    max-height: 220px;
+    line-height: 2.2;
+    max-height: 300px;
     overflow-y: auto;
 }
 
 #previewList::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
 }
 
 #previewList::-webkit-scrollbar-thumb {
@@ -216,20 +220,20 @@ input:focus {
 
 .progress-box {
     display: none;
-    margin-top: 22px;
+    margin-top: 28px;
 }
 
 #progressText {
-    font-size: 12px;
+    font-size: 14px;
     color: #aaa;
 }
 
 .progress-track {
-    height: 8px;
+    height: 11px;
     background: #303030;
     border-radius: 10px;
     overflow: hidden;
-    margin-top: 10px;
+    margin-top: 13px;
 }
 
 .progress-fill {
@@ -241,14 +245,14 @@ input:focus {
 
 button {
     width: 100%;
-    min-height: 55px;
-    padding: 16px;
-    margin-top: 25px;
+    min-height: 68px;
+    padding: 20px;
+    margin-top: 30px;
     background: var(--purple);
     color: #100c18;
     border: none;
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: 11px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: .2s;
@@ -265,62 +269,62 @@ button:disabled {
 }
 
 #status {
-    margin-top: 18px;
+    margin-top: 22px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--purple-light);
-    line-height: 1.7;
+    line-height: 1.8;
     overflow-wrap: anywhere;
 }
 
 .footer {
     text-align: center;
     color: #555;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 2px;
-    margin-top: 32px;
+    margin-top: 42px;
 }
 
 /* TABLET */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     body {
         padding: 25px 18px;
     }
 
     .container {
-        max-width: 100%;
-        padding: 28px;
+        padding: 32px;
     }
 
     .upload {
-        padding: 40px 15px;
+        padding: 55px 20px;
     }
 }
 
 /* MOBILE */
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
     body {
-        padding: 12px;
+        padding: 10px;
     }
 
     .container {
-        padding: 20px 16px;
+        padding: 23px 17px;
         border-radius: 14px;
     }
 
     .header {
-        margin-bottom: 23px;
+        margin-bottom: 25px;
     }
 
     .header h1 {
-        font-size: clamp(21px, 6vw, 28px);
+        font-size: clamp(22px, 6vw, 30px);
         letter-spacing: 1px;
+        overflow-wrap: anywhere;
     }
 
     .subtitle {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .limit {
@@ -328,75 +332,76 @@ button:disabled {
     }
 
     .upload {
-        padding: 32px 12px;
+        padding: 40px 12px;
     }
 
     .symbol {
-        font-size: 38px;
+        font-size: 43px;
     }
 
     .upload strong {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .upload p {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .section {
-        margin-top: 24px;
+        margin-top: 29px;
     }
 
     .section-title {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .settings {
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 17px;
     }
 
     .field label {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     input {
-        padding: 14px;
-        font-size: 14px;
+        padding: 15px;
+        font-size: 15px;
     }
 
     .info {
-        padding: 14px;
-        font-size: 12px;
+        padding: 17px;
+        font-size: 13px;
     }
 
     .preview-title {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     #previewList {
-        font-size: 12px;
+        font-size: 13px;
+        padding: 16px;
     }
 
     button {
-        min-height: 54px;
-        font-size: 12px;
+        min-height: 58px;
+        font-size: 13px;
     }
 
     .footer {
-        font-size: 9px;
+        font-size: 10px;
     }
 }
 
-/* SMALL MOBILE */
+/* SMALL PHONE */
 
 @media (max-width: 350px) {
     .container {
-        padding: 16px 12px;
+        padding: 18px 13px;
     }
 
     .header h1 {
-        font-size: 19px;
+        font-size: 20px;
     }
 
     .info {
@@ -438,7 +443,6 @@ button:disabled {
     </label>
 
     <div class="section">
-
         <div class="section-title">
             01 / RENAME SETTINGS
         </div>
@@ -465,11 +469,9 @@ button:disabled {
         <p class="hint">
             Example: ch001.pdf, ch002.pdf, ch003.pdf ...
         </p>
-
     </div>
 
     <div class="section">
-
         <div class="section-title">
             02 / ZIP SETTINGS
         </div>
@@ -487,7 +489,6 @@ button:disabled {
             Choose your own ZIP download name.
             Example: My Chapters.zip
         </p>
-
     </div>
 
     <div class="info">
@@ -496,7 +497,6 @@ button:disabled {
     </div>
 
     <div class="preview">
-
         <div class="preview-title">
             03 / RENAME PREVIEW
         </div>
@@ -504,19 +504,14 @@ button:disabled {
         <div id="previewList">
             No PDF files selected.
         </div>
-
     </div>
 
     <div class="progress-box" id="progressBox">
-
-        <div id="progressText">
-            Preparing files...
-        </div>
+        <div id="progressText">Preparing files...</div>
 
         <div class="progress-track">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-
     </div>
 
     <button id="downloadBtn" disabled>
@@ -570,17 +565,13 @@ function setFiles(selectedFiles) {
         .sort(naturalSort);
 
     if (allFiles.length > 500) {
-
         files = allFiles.slice(0, 500);
 
         statusText.textContent =
             "LIMIT EXCEEDED! Only the first 500 PDF files are selected.";
-
     } else {
-
         files = allFiles;
         statusText.textContent = "";
-
     }
 
     updatePreview();
@@ -626,11 +617,9 @@ function updatePreview() {
     fileCount.textContent = files.length + " / 500 PDF";
 
     if (files.length === 0) {
-
         previewList.textContent = "No PDF files selected.";
         downloadBtn.disabled = true;
         return;
-
     }
 
     downloadBtn.disabled = processing;
@@ -639,19 +628,15 @@ function updatePreview() {
     const limit = Math.min(files.length, 10);
 
     for (let i = 0; i < limit; i++) {
-
         preview += `<div>${i + 1}. ${
             escapeHTML(getNewName(i))
         }</div>`;
-
     }
 
     if (files.length > 10) {
-
         preview += `<div>... and ${
             files.length - 10
         } more files.</div>`;
-
     }
 
     previewList.innerHTML = preview;
@@ -678,22 +663,16 @@ downloadBtn.addEventListener("click", async function() {
     if (files.length === 0 || processing) return;
 
     if (typeof JSZip === "undefined") {
-
         statusText.textContent =
             "Failed to load ZIP library. Check your internet connection.";
-
         return;
-
     }
 
     if (!zipNameInput.value.trim()) {
-
         statusText.textContent =
             "Please enter a ZIP file name.";
-
         zipNameInput.focus();
         return;
-
     }
 
     const zipName = zipNameInput.value
@@ -702,22 +681,17 @@ downloadBtn.addEventListener("click", async function() {
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
 
     if (!zipName) {
-
         statusText.textContent =
             "Please enter a valid ZIP file name.";
-
         return;
-
     }
 
     processing = true;
-
     downloadBtn.disabled = true;
     downloadBtn.textContent = "PROCESSING...";
 
     progressBox.style.display = "block";
     progressFill.style.width = "0%";
-
     statusText.textContent = "";
 
     try {
@@ -726,9 +700,7 @@ downloadBtn.addEventListener("click", async function() {
 
         for (let i = 0; i < files.length; i++) {
 
-            const newName = getNewName(i);
-
-            zip.file(newName, files[i]);
+            zip.file(getNewName(i), files[i]);
 
             const percent = Math.round(
                 ((i + 1) / files.length) * 50
@@ -745,21 +717,16 @@ downloadBtn.addEventListener("click", async function() {
                     setTimeout(resolve, 0)
                 );
             }
-
         }
 
         progressText.textContent = "Creating ZIP file...";
 
         const content = await zip.generateAsync({
-
             type: "blob",
-
             compression: "DEFLATE",
-
             compressionOptions: {
                 level: 3
             }
-
         }, function(metadata) {
 
             const percent = 50 +
@@ -773,7 +740,6 @@ downloadBtn.addEventListener("click", async function() {
         });
 
         const url = URL.createObjectURL(content);
-
         const link = document.createElement("a");
 
         link.href = url;
@@ -803,7 +769,6 @@ downloadBtn.addEventListener("click", async function() {
     } finally {
 
         processing = false;
-
         downloadBtn.disabled = files.length === 0;
 
         downloadBtn.textContent =
