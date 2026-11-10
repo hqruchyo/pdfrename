@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
 <title>HQRUCHYO-RENAMER</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -15,53 +16,65 @@
     padding: 0;
 }
 
+:root {
+    --bg: #090909;
+    --panel: #151515;
+    --input: #202020;
+    --border: #303030;
+    --purple: #a68cff;
+    --purple-light: #c1adff;
+    --text: #eeeeee;
+    --muted: #888;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #090909;
-    color: #eeeeee;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    padding: 35px 15px;
+    padding: 40px 24px;
 }
 
 .container {
-    max-width: 650px;
-    margin: auto;
-    background: #141414;
-    padding: 28px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 38px;
+    background: var(--panel);
     border: 1px solid #292929;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px #00000060;
+    border-radius: 20px;
+    box-shadow: 0 15px 60px #00000070;
 }
 
 .header {
-    margin-bottom: 28px;
+    margin-bottom: 30px;
 }
 
 .header h1 {
-    font-size: 25px;
+    font-size: clamp(25px, 3.5vw, 38px);
     letter-spacing: 2px;
-    color: #ffffff;
+    font-weight: 800;
 }
 
 .header h1 span {
-    color: #a68cff;
+    color: var(--purple);
 }
 
 .subtitle {
-    color: #858585;
-    font-size: 13px;
-    margin-top: 9px;
-    line-height: 1.6;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 12px;
 }
 
 .limit {
     display: inline-block;
-    margin-top: 13px;
-    padding: 6px 10px;
+    margin-top: 15px;
+    padding: 8px 12px;
     border: 1px solid #57477c;
-    color: #bba8ff;
+    color: var(--purple-light);
     border-radius: 6px;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 1px;
 }
 
@@ -69,32 +82,34 @@ body {
     display: block;
     border: 1px dashed #555;
     background: #1b1b1b;
-    padding: 35px 15px;
+    padding: 55px 20px;
     text-align: center;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     transition: .2s;
 }
 
-.upload:hover, .upload.drag {
-    border-color: #a68cff;
+.upload:hover,
+.upload.drag {
+    border-color: var(--purple);
     background: #211d2b;
 }
 
 .symbol {
-    font-size: 36px;
-    margin-bottom: 13px;
+    font-size: 48px;
+    margin-bottom: 18px;
 }
 
 .upload strong {
-    color: #b49bff;
-    font-size: 14px;
+    color: var(--purple-light);
+    font-size: 16px;
 }
 
 .upload p {
-    color: #777;
-    font-size: 12px;
-    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 10px;
+    line-height: 1.5;
 }
 
 #fileInput {
@@ -102,113 +117,91 @@ body {
 }
 
 .section {
-    margin-top: 24px;
+    margin-top: 30px;
 }
 
 .section-title {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: bold;
-    margin-bottom: 12px;
-    color: #eee;
+    margin-bottom: 17px;
+    letter-spacing: .5px;
 }
 
 .settings {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
 .field label {
     display: block;
-    font-size: 11px;
-    color: #999;
-    margin-bottom: 8px;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 10px;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #333;
-    border-radius: 8px;
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid #383838;
+    border-radius: 9px;
     outline: none;
-    background: #202020;
+    background: var(--input);
     color: white;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 input:focus {
-    border-color: #a68cff;
+    border-color: var(--purple);
 }
 
 .hint {
     color: #777;
-    font-size: 11px;
-    margin-top: 9px;
-    line-height: 1.5;
+    font-size: 12px;
+    margin-top: 12px;
+    line-height: 1.6;
 }
 
 .info {
-    margin-top: 22px;
-    padding: 15px;
+    margin-top: 25px;
+    padding: 18px;
     background: #202020;
-    border: 1px solid #303030;
-    border-radius: 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
 }
 
 #fileCount {
-    color: #b49bff;
+    color: var(--purple-light);
     font-weight: bold;
 }
 
-.progress-box {
-    display: none;
-    margin-top: 18px;
-}
-
-.progress-track {
-    height: 6px;
-    background: #303030;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 9px;
-}
-
-.progress-fill {
-    height: 100%;
-    width: 0%;
-    background: #a68cff;
-    transition: width .2s;
-}
-
-#progressText {
-    font-size: 11px;
-    color: #aaa;
-}
-
 .preview {
-    margin-top: 20px;
-    border: 1px solid #303030;
-    border-radius: 9px;
+    margin-top: 22px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     overflow: hidden;
 }
 
 .preview-title {
-    padding: 13px;
+    padding: 16px;
     background: #202020;
     color: #ddd;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
 }
 
 #previewList {
-    padding: 13px;
-    font-size: 12px;
+    padding: 16px;
+    font-size: 13px;
     color: #aaa;
-    line-height: 2;
-    max-height: 180px;
+    line-height: 2.1;
+    max-height: 220px;
     overflow-y: auto;
 }
 
@@ -221,22 +214,48 @@ input:focus {
     border-radius: 10px;
 }
 
+.progress-box {
+    display: none;
+    margin-top: 22px;
+}
+
+#progressText {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.progress-track {
+    height: 8px;
+    background: #303030;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--purple);
+    transition: width .2s;
+}
+
 button {
     width: 100%;
-    padding: 15px;
-    margin-top: 22px;
-    background: #a68cff;
+    min-height: 55px;
+    padding: 16px;
+    margin-top: 25px;
+    background: var(--purple);
     color: #100c18;
     border: none;
-    border-radius: 9px;
-    font-size: 13px;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: .2s;
 }
 
 button:hover {
-    background: #bba8ff;
+    background: var(--purple-light);
 }
 
 button:disabled {
@@ -246,28 +265,142 @@ button:disabled {
 }
 
 #status {
-    margin-top: 15px;
+    margin-top: 18px;
     text-align: center;
-    font-size: 12px;
-    color: #b49bff;
-    line-height: 1.5;
+    font-size: 13px;
+    color: var(--purple-light);
+    line-height: 1.7;
+    overflow-wrap: anywhere;
 }
 
 .footer {
     text-align: center;
     color: #555;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 2px;
-    margin-top: 28px;
+    margin-top: 32px;
 }
 
-@media(max-width: 450px) {
+/* TABLET */
+
+@media (max-width: 768px) {
+    body {
+        padding: 25px 18px;
+    }
+
     .container {
-        padding: 20px;
+        max-width: 100%;
+        padding: 28px;
+    }
+
+    .upload {
+        padding: 40px 15px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 520px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .header {
+        margin-bottom: 23px;
+    }
+
+    .header h1 {
+        font-size: clamp(21px, 6vw, 28px);
+        letter-spacing: 1px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .limit {
+        font-size: 10px;
+    }
+
+    .upload {
+        padding: 32px 12px;
+    }
+
+    .symbol {
+        font-size: 38px;
+    }
+
+    .upload strong {
+        font-size: 14px;
+    }
+
+    .upload p {
+        font-size: 11px;
+    }
+
+    .section {
+        margin-top: 24px;
+    }
+
+    .section-title {
+        font-size: 13px;
     }
 
     .settings {
         grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .field label {
+        font-size: 12px;
+    }
+
+    input {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .info {
+        padding: 14px;
+        font-size: 12px;
+    }
+
+    .preview-title {
+        font-size: 12px;
+    }
+
+    #previewList {
+        font-size: 12px;
+    }
+
+    button {
+        min-height: 54px;
+        font-size: 12px;
+    }
+
+    .footer {
+        font-size: 9px;
+    }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 350px) {
+    .container {
+        padding: 16px 12px;
+    }
+
+    .header h1 {
+        font-size: 19px;
+    }
+
+    .info {
+        font-size: 11px;
     }
 }
 </style>
@@ -279,24 +412,36 @@ button:disabled {
 
     <div class="header">
         <h1>HQRUCHYO<span>-</span>RENAMER</h1>
+
         <p class="subtitle">
             Bulk PDF renaming tool. Rename multiple PDF files
             automatically with sequential numbering.
         </p>
-        <div class="limit">MAXIMUM 500 PDF FILES</div>
+
+        <div class="limit">
+            MAXIMUM 500 PDF FILES
+        </div>
     </div>
 
     <label class="upload" id="dropArea">
         <div class="symbol">📁</div>
+
         <strong>SELECT PDF FILES</strong>
+
         <p>Click here or drag and drop your files</p>
         <p>Supported format: PDF</p>
-        <input type="file" id="fileInput"
-        accept=".pdf,application/pdf" multiple>
+
+        <input type="file"
+        id="fileInput"
+        accept=".pdf,application/pdf"
+        multiple>
     </label>
 
     <div class="section">
-        <div class="section-title">01 / RENAME SETTINGS</div>
+
+        <div class="section-title">
+            01 / RENAME SETTINGS
+        </div>
 
         <div class="settings">
 
@@ -320,21 +465,29 @@ button:disabled {
         <p class="hint">
             Example: ch001.pdf, ch002.pdf, ch003.pdf ...
         </p>
+
     </div>
 
     <div class="section">
-        <div class="section-title">02 / ZIP SETTINGS</div>
+
+        <div class="section-title">
+            02 / ZIP SETTINGS
+        </div>
 
         <div class="field">
             <label>ZIP File Name</label>
-            <input type="text" id="zipName"
+
+            <input type="text"
+            id="zipName"
             value="HQRUCHYO-PDF">
+
         </div>
 
         <p class="hint">
             Choose your own ZIP download name.
             Example: My Chapters.zip
         </p>
+
     </div>
 
     <div class="info">
@@ -343,6 +496,7 @@ button:disabled {
     </div>
 
     <div class="preview">
+
         <div class="preview-title">
             03 / RENAME PREVIEW
         </div>
@@ -350,13 +504,19 @@ button:disabled {
         <div id="previewList">
             No PDF files selected.
         </div>
+
     </div>
 
     <div class="progress-box" id="progressBox">
-        <div id="progressText">Preparing files...</div>
+
+        <div id="progressText">
+            Preparing files...
+        </div>
+
         <div class="progress-track">
             <div class="progress-fill" id="progressFill"></div>
         </div>
+
     </div>
 
     <button id="downloadBtn" disabled>
@@ -448,7 +608,7 @@ dropArea.addEventListener("drop", function(e) {
 function getNewName(index) {
 
     const prefix = prefixInput.value;
-    const start = parseInt(startInput.value) || 0;
+    const start = Math.max(0, parseInt(startInput.value) || 0);
 
     const digits = Math.min(
         10,
@@ -551,6 +711,7 @@ downloadBtn.addEventListener("click", async function() {
     }
 
     processing = true;
+
     downloadBtn.disabled = true;
     downloadBtn.textContent = "PROCESSING...";
 
@@ -627,7 +788,6 @@ downloadBtn.addEventListener("click", async function() {
         }, 60000);
 
         progressFill.style.width = "100%";
-
         progressText.textContent = "100% COMPLETED";
 
         statusText.textContent =
