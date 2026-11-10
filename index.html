@@ -6,903 +6,317 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090909">
 <title>HQRUCHYO-RENAMER</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background: #090909;
-    color: #f2f2f5;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    padding: 38px 18px 65px;
-}
-
-.container {
-    width: 100%;
-    max-width: 730px;
-    margin: 0 auto;
-    padding: 30px;
-    background: #14151c;
-    border: 1px solid #292b36;
-    border-radius: 17px;
-    box-shadow: 0 15px 45px #0008;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 34px;
-}
-
-.header .top {
-    color: #b69aff;
-    font-size: 12px;
-    letter-spacing: 6px;
-    margin-bottom: 12px;
-}
-
-.header h1 {
-    font-size: clamp(23px, 4vw, 30px);
-    letter-spacing: 1.5px;
-    margin-bottom: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-}
-
-.header p {
-    color: #9298ad;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.upload {
-    display: block;
-    width: 100%;
-    padding: 43px 15px;
-    text-align: center;
-    background: #191a25;
-    border: 1px dashed #665b86;
-    border-radius: 13px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.upload:hover,
-.upload.drag {
-    border-color: #b69aff;
-    background: #211e30;
-}
-
-.folder {
-    font-size: 43px;
-    margin-bottom: 17px;
-}
-
-.upload strong {
-    display: block;
-    color: #c0a5ff;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.upload p {
-    color: #9298ad;
-    font-size: 12px;
-    line-height: 1.9;
-}
-
-#fileInput {
-    display: none;
-}
-
-.section {
-    margin-top: 27px;
-}
-
-.section-title {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 17px;
-}
-
-.settings {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.field label {
-    display: block;
-    color: #a1a7bb;
-    font-size: 12px;
-    margin-bottom: 9px;
-}
-
-input {
-    width: 100%;
-    min-width: 0;
-    padding: 13px;
-    background: #1d1e28;
-    border: 1px solid #353746;
-    border-radius: 9px;
-    outline: none;
-    color: white;
-    font-size: 14px;
-}
-
-input:focus {
-    border-color: #a98aff;
-}
-
-input::placeholder {
-    color: #73778a;
-}
-
-.hint {
-    color: #858ba1;
-    font-size: 12px;
-    margin-top: 10px;
-    line-height: 1.7;
-}
-
-.info {
-    margin-top: 22px;
-    padding: 17px;
-    background: #1d1e29;
-    border: 1px solid #353746;
-    border-radius: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 13px;
-}
-
-.info strong {
-    color: #c0a5ff;
-}
-
-.preview {
-    margin-top: 20px;
-    border: 1px solid #353746;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.preview-title {
-    padding: 15px;
-    background: #20212b;
-    font-size: 13px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-}
-
-#previewList {
-    padding: 15px;
-    max-height: 230px;
-    overflow-y: auto;
-    color: #a3a7b8;
-    font-size: 12px;
-    line-height: 2;
-}
-
-#previewList::-webkit-scrollbar {
-    width: 5px;
-}
-
-#previewList::-webkit-scrollbar-thumb {
-    background: #5e547b;
-    border-radius: 10px;
-}
-
-.progress-box {
-    display: none;
-    margin-top: 22px;
-}
-
-#progressText {
-    color: #aaaec0;
-    font-size: 12px;
-}
-
-.progress-track {
-    height: 8px;
-    background: #30313d;
-    border-radius: 20px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    width: 0%;
-    height: 100%;
-    background: #ad91ff;
-    transition: width .2s;
-}
-
-.download-btn {
-    width: 100%;
-    min-height: 54px;
-    margin-top: 23px;
-    padding: 15px;
-    border: none;
-    border-radius: 9px;
-    background: #a98aff;
-    color: #15101f;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.download-btn:hover {
-    background: #c5afff;
-}
-
-.download-btn:disabled {
-    background: #393543;
-    color: #85808e;
-    cursor: not-allowed;
-}
-
-#status {
-    text-align: center;
-    color: #bba4ff;
-    font-size: 12px;
-    line-height: 1.8;
-    margin-top: 17px;
-    overflow-wrap: anywhere;
-}
-
-.footer {
-    margin-top: 28px;
-    text-align: center;
-    color: #53576a;
-    font-size: 10px;
-    letter-spacing: 2px;
-}
-
-/* INFO BUTTON */
-
-.info-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-}
-
-.info-btn {
-    width: 19px;
-    height: 19px;
-    min-height: 19px;
-    padding: 0;
-    margin: 0;
-    border: 1px solid #9478cf;
-    border-radius: 50%;
-    background: transparent;
-    color: #c0a5ff;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.info-btn:hover,
-.info-btn.active {
-    background: #a98aff;
-    color: #171020;
-}
-
-.tooltip {
-    display: none;
-    position: absolute;
-    z-index: 20;
-    width: 240px;
-    left: 50%;
-    top: calc(100% + 12px);
-    transform: translateX(-50%);
-    padding: 14px;
-    border: 1px solid #66578d;
-    border-radius: 10px;
-    background: #22202e;
-    color: #d5d1e4;
-    font-size: 12px;
-    font-weight: normal;
-    line-height: 1.7;
-    letter-spacing: 0;
-    text-align: left;
-    box-shadow: 0 8px 25px #0009;
-}
-
-.tooltip.show {
-    display: block;
-    animation: appear .18s ease;
-}
-
-@keyframes appear {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -5px);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-}
-
-.tooltip b {
-    display: block;
-    color: #c0a5ff;
-    margin-bottom: 5px;
-    font-size: 12px;
-}
-
-.tooltip a {
-    color: #c0a5ff;
-    text-decoration: none;
-}
-
-.tooltip a:hover {
-    text-decoration: underline;
-}
-
-/* TABLET */
-
-@media (max-width: 768px) {
-    body {
-        padding: 25px 15px 45px;
-    }
-
-    .container {
-        padding: 25px;
-    }
-}
-
-/* MOBILE */
-
-@media (max-width: 500px) {
-    body {
-        padding: 12px 10px 35px;
-    }
-
-    .container {
-        padding: 21px 16px;
-        border-radius: 13px;
-    }
-
-    .header {
-        margin-bottom: 25px;
-    }
-
-    .header h1 {
-        font-size: 23px;
-        letter-spacing: .8px;
-    }
-
-    .header p {
-        font-size: 12px;
-    }
-
-    .upload {
-        padding: 35px 12px;
-    }
-
-    .folder {
-        font-size: 38px;
-    }
-
-    .settings {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .field label {
-        font-size: 12px;
-    }
-
-    input {
-        padding: 14px;
-        font-size: 14px;
-    }
-
-    .section {
-        margin-top: 25px;
-    }
-
-    .info {
-        padding: 15px;
-        font-size: 12px;
-    }
-
-    .tooltip {
-        width: min(240px, 75vw);
-    }
-
-    button.download-btn {
-        min-height: 54px;
-    }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#090909;color:#f2f2f5;font-family:Arial,sans-serif;min-height:100vh;padding:38px 18px 65px}
+.container{width:100%;max-width:730px;margin:auto;padding:30px;background:#14151c;border:1px solid #292b36;border-radius:17px;box-shadow:0 15px 45px #0008}
+.header{text-align:center;margin-bottom:34px}
+.top{color:#b69aff;font-size:12px;letter-spacing:6px;margin-bottom:12px}
+.header h1{font-size:clamp(23px,4vw,30px);letter-spacing:1px;margin-bottom:13px;display:flex;align-items:center;justify-content:center;gap:9px}
+.header p{color:#9298ad;font-size:14px;line-height:1.7}
+.info-wrap{position:relative;display:inline-flex;align-items:center}
+.info-btn{width:19px;height:19px;padding:0;border:1px solid #9478cf;border-radius:50%;background:transparent;color:#c0a5ff;font-size:12px;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.info-btn.active{background:#a98aff;color:#171020}
+.tooltip{display:none;position:absolute;z-index:20;width:240px;left:50%;top:calc(100% + 12px);transform:translateX(-50%);padding:14px;border:1px solid #66578d;border-radius:10px;background:#22202e;color:#d5d1e4;font-size:12px;font-weight:normal;line-height:1.7;letter-spacing:0;text-align:left;box-shadow:0 8px 25px #0009}
+.tooltip.show{display:block}
+.tooltip b{display:block;color:#c0a5ff;margin-bottom:5px}
+.tooltip a{color:#c0a5ff;text-decoration:none}
+.upload{display:block;width:100%;padding:43px 15px;text-align:center;background:#191a25;border:1px dashed #665b86;border-radius:13px;cursor:pointer}
+.upload:hover,.upload.drag{border-color:#b69aff;background:#211e30}
+.folder{font-size:43px;margin-bottom:17px}
+.upload strong{display:block;color:#c0a5ff;font-size:14px;margin-bottom:10px}
+.upload p{color:#9298ad;font-size:12px;line-height:1.9}
+#fileInput{display:none}
+.section{margin-top:27px}
+.section-title{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:bold;margin-bottom:17px}
+.version-bar{display:flex;align-items:center;gap:8px;margin-bottom:17px;flex-wrap:wrap}
+.version-btn{padding:8px 15px;border:1px solid #454052;border-radius:7px;background:#1d1e28;color:#a5a1b4;font-size:11px;font-weight:bold;cursor:pointer}
+.version-btn.active{background:#a98aff;color:#171020;border-color:#a98aff}
+.version-help{color:#858ba1;font-size:11px}
+.version-settings{display:none}
+.version-settings.active{display:block}
+.settings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.field label{display:flex;align-items:center;gap:7px;color:#a1a7bb;font-size:12px;margin-bottom:9px}
+input{width:100%;min-width:0;padding:13px;background:#1d1e28;border:1px solid #353746;border-radius:9px;outline:none;color:white;font-size:14px}
+input:focus{border-color:#a98aff}
+.hint{color:#858ba1;font-size:12px;margin-top:10px;line-height:1.7}
+.info{margin-top:22px;padding:17px;background:#1d1e29;border:1px solid #353746;border-radius:11px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.info strong{color:#c0a5ff}
+.preview{margin-top:20px;border:1px solid #353746;border-radius:10px;overflow:hidden}
+.preview-title{padding:15px;background:#20212b;font-size:13px;font-weight:bold;display:flex;align-items:center;gap:9px}
+#previewList{padding:15px;max-height:260px;overflow-y:auto;color:#a3a7b8;font-size:12px;line-height:2;overflow-wrap:anywhere}
+.progress-box{display:none;margin-top:22px}
+#progressText{color:#aaaec0;font-size:12px}
+.progress-track{height:8px;background:#30313d;border-radius:20px;margin-top:10px;overflow:hidden}
+.progress-fill{width:0%;height:100%;background:#ad91ff;transition:width .2s}
+.download-btn{width:100%;min-height:54px;margin-top:23px;padding:15px;border:none;border-radius:9px;background:#a98aff;color:#15101f;font-size:13px;font-weight:bold;cursor:pointer}
+.download-btn:disabled{background:#393543;color:#85808e;cursor:not-allowed}
+#status{text-align:center;color:#bba4ff;font-size:12px;line-height:1.8;margin-top:17px;overflow-wrap:anywhere}
+.footer{margin-top:28px;text-align:center;color:#53576a;font-size:10px;letter-spacing:2px}
+@media(max-width:768px){body{padding:25px 15px 45px}.container{padding:25px}}
+@media(max-width:500px){body{padding:12px 10px 35px}.container{padding:21px 16px;border-radius:13px}.header{margin-bottom:25px}.header h1{font-size:22px}.header p{font-size:12px}.upload{padding:35px 12px}.settings{grid-template-columns:1fr;gap:15px}input{padding:14px;font-size:14px}.section{margin-top:25px}.info{padding:15px;font-size:12px}.tooltip{width:min(240px,75vw)}}
 </style>
 </head>
-
 <body>
-
 <div class="container">
 
-    <header class="header">
+<header class="header">
+ <div class="top">P D F &nbsp; T O O L S</div>
+ <h1>HQRUCHYO-RENAMER
+  <span class="info-wrap">
+   <button class="info-btn" type="button">i</button>
+   <span class="tooltip"><b>ABOUT THIS WEBSITE</b>Web ini dibuat oleh <a href="https://t.me/heilnox" target="_blank" rel="noopener">@heilnox on Telegram</a>. Terima kasih sudah menggunakan HQRUCHYO-RENAMER!</span>
+  </span>
+ </h1>
+ <p>Bulk PDF renaming tool. Rename multiple PDF files automatically in one simple process.</p>
+</header>
 
-        <div class="top">P D F &nbsp; T O O L S</div>
+<label class="upload" id="dropArea">
+ <div class="folder">📁</div>
+ <strong>SELECT YOUR PDF FILES</strong>
+ <p>Click here or drag and drop your files</p>
+ <p>Supported format: PDF · Maximum 500 files</p>
+ <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple>
+</label>
 
-        <h1>
-            HQRUCHYO-RENAMER
+<section class="section">
+ <div class="section-title">01 / RENAME SETTINGS
+  <span class="info-wrap">
+   <button class="info-btn" type="button">i</button>
+   <span class="tooltip"><b>RENAME TUTORIAL</b>Version 1: nama chapter otomatis seperti ch001, ch002, dan seterusnya.<br><br>Version 2: nomor otomatis diikuti satu judul yang sama untuk semua PDF.</span>
+  </span>
+ </div>
 
-            <span class="info-wrap">
-                <button class="info-btn" type="button"
-                aria-label="Informasi pembuat">i</button>
+ <div class="version-bar">
+  <button class="version-btn active" id="v1Btn" type="button">VERSION 1</button>
+  <button class="version-btn" id="v2Btn" type="button">VERSION 2</button>
+  <span class="version-help">Choose rename format</span>
+ </div>
 
-                <span class="tooltip">
-                    <b>ABOUT THIS WEBSITE</b>
-                    Web ini dibuat oleh
-                    <a href="https://t.me/heilnox"
-                    target="_blank" rel="noopener">
-                    @heilnox on Telegram
-                    </a>.
-                    Terima kasih sudah menggunakan HQRUCHYO-RENAMER!
-                </span>
-            </span>
+ <div class="version-settings active" id="version1">
+  <div class="settings">
+   <div class="field"><label>Nama awal</label><input id="prefix" value="ch"></div>
+   <div class="field"><label>Nomor mulai</label><input id="start1" type="number" value="1" min="0"></div>
+   <div class="field"><label>Jumlah digit</label><input id="digits1" type="number" value="3" min="1" max="10"></div>
+  </div>
+  <p class="hint">Example: ch001.pdf, ch002.pdf, ch003.pdf...</p>
+ </div>
 
-        </h1>
+ <div class="version-settings" id="version2">
+  <div class="settings">
+   <div class="field"><label>Nomor mulai</label><input id="start2" type="number" value="1" min="0"></div>
+   <div class="field"><label>Jumlah digit</label><input id="digits2" type="number" value="2" min="1" max="10"></div>
+  </div>
 
-        <p>
-            Bulk PDF renaming tool. Rename multiple PDF files
-            automatically in one simple process.
-        </p>
+  <div class="field" style="margin-top:18px">
+   <label>Judul PDF (berlaku untuk semua file)
+    <span class="info-wrap">
+     <button class="info-btn" type="button">i</button>
+     <span class="tooltip"><b>VERSION 2 TUTORIAL</b>Masukkan satu judul saja. Judul tersebut akan digunakan untuk seluruh PDF. Contoh: EXOPLANET. Hasilnya 01. EXOPLANET.pdf, 02. EXOPLANET.pdf, dan seterusnya.</span>
+    </span>
+   </label>
+   <input type="text" id="title" placeholder="Masukkan judul, contoh: EXOPLANET">
+  </div>
+  <p class="hint">Example: 01. EXOPLANET.pdf, 02. EXOPLANET.pdf...</p>
+ </div>
+</section>
 
-    </header>
+<section class="section">
+ <div class="section-title">02 / ZIP FOLDER SETTINGS
+  <span class="info-wrap">
+   <button class="info-btn" type="button">i</button>
+   <span class="tooltip"><b>ZIP TUTORIAL</b>Masukkan nama ZIP yang kamu inginkan. Contoh: EXOPLANET. Hasil download: EXOPLANET.zip, berisi folder EXOPLANET.</span>
+  </span>
+ </div>
+ <div class="field">
+  <label>Nama folder ZIP / nama file download</label>
+  <input type="text" id="zipName" placeholder="Isi nama ZIP di sini...">
+ </div>
+ <p class="hint">Nama ini digunakan sebagai nama file ZIP sekaligus folder di dalam ZIP.</p>
+</section>
 
-    <label class="upload" id="dropArea">
+<div class="info">
+ <span>PDF SELECTED</span>
+ <strong id="fileCount">0 PDF</strong>
+</div>
 
-        <div class="folder">📁</div>
+<section class="preview">
+ <div class="preview-title">03 / RENAME PREVIEW
+  <span class="info-wrap">
+   <button class="info-btn" type="button">i</button>
+   <span class="tooltip"><b>PREVIEW TUTORIAL</b>Periksa nama baru PDF sebelum download. Maksimal 10 nama pertama ditampilkan.</span>
+  </span>
+ </div>
+ <div id="previewList">No PDF files selected.</div>
+</section>
 
-        <strong>SELECT YOUR PDF FILES</strong>
+<div class="progress-box" id="progressBox">
+ <div id="progressText">Preparing files...</div>
+ <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
 
-        <p>Click here or drag and drop your files</p>
-        <p>Supported format: PDF</p>
-
-        <input type="file"
-        id="fileInput"
-        accept=".pdf,application/pdf"
-        multiple>
-
-    </label>
-
-    <section class="section">
-
-        <div class="section-title">
-            01 / RENAME SETTINGS
-
-            <span class="info-wrap">
-                <button class="info-btn" type="button"
-                aria-label="Rename tutorial">i</button>
-
-                <span class="tooltip">
-                    <b>RENAME TUTORIAL</b>
-                    Atur nama awal file PDF yang kamu inginkan.
-                    Contohnya, isi nama awal dengan ch untuk menghasilkan
-                    ch001, ch002, ch003, dan seterusnya.
-                </span>
-            </span>
-        </div>
-
-        <div class="settings">
-
-            <div class="field">
-                <label>Nama awal</label>
-                <input type="text" id="prefix" value="ch">
-            </div>
-
-            <div class="field">
-                <label>Nomor mulai</label>
-                <input type="number" id="start" value="1" min="0">
-            </div>
-
-            <div class="field">
-                <label>Jumlah digit</label>
-                <input type="number" id="digits" value="3" min="1" max="10">
-            </div>
-
-        </div>
-
-        <p class="hint">
-            Example: ch001.pdf, ch002.pdf, ch003.pdf...
-        </p>
-
-        <p class="hint">
-            Nomor mulai menentukan urutan awal, sedangkan jumlah digit
-            menentukan panjang angka. Contoh: 3 digit = 001.
-        </p>
-
-    </section>
-
-    <section class="section">
-
-        <div class="section-title">
-            02 / ZIP FOLDER SETTINGS
-
-            <span class="info-wrap">
-                <button class="info-btn" type="button"
-                aria-label="ZIP tutorial">i</button>
-
-                <span class="tooltip">
-                    <b>ZIP TUTORIAL</b>
-                    Masukkan nama ZIP yang kamu inginkan.
-                    Misalnya, EXOPLANET. Hasil download akan bernama
-                    EXOPLANET.zip dan file PDF di dalamnya tersimpan
-                    dalam folder EXOPLANET.
-                </span>
-            </span>
-        </div>
-
-        <div class="field">
-
-            <label>Isi nama ZIP</label>
-
-            <input type="text"
-            id="zipName"
-            placeholder="Isi nama ZIP di sini...">
-
-        </div>
-
-        <p class="hint">
-            Nama yang kamu masukkan akan digunakan sebagai nama
-            file ZIP sekaligus folder di dalam ZIP.
-        </p>
-
-    </section>
-
-    <div class="info">
-        <span>PDF SELECTED</span>
-        <strong id="fileCount">0 PDF</strong>
-    </div>
-
-    <section class="preview">
-
-        <div class="preview-title">
-
-            03 / RENAME PREVIEW
-
-            <span class="info-wrap">
-                <button class="info-btn" type="button"
-                aria-label="Preview tutorial">i</button>
-
-                <span class="tooltip">
-                    <b>PREVIEW TUTORIAL</b>
-                    Bagian ini menampilkan contoh nama baru
-                    dari PDF yang kamu pilih. Periksa urutannya
-                    sebelum menekan tombol download.
-                </span>
-            </span>
-
-        </div>
-
-        <div id="previewList">
-            No PDF files selected.
-        </div>
-
-    </section>
-
-    <div class="progress-box" id="progressBox">
-
-        <div id="progressText">
-            Preparing files...
-        </div>
-
-        <div class="progress-track">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-
-    </div>
-
-    <button class="download-btn" id="downloadBtn" disabled>
-        DOWNLOAD RENAMED PDF (.ZIP)
-    </button>
-
-    <p id="status"></p>
-
-    <footer class="footer">
-        HQRUCHYO-RENAMER © 2026
-    </footer>
-
+<button class="download-btn" id="downloadBtn" disabled>DOWNLOAD RENAMED PDF (.ZIP)</button>
+<p id="status"></p>
+<footer class="footer">HQRUCHYO-RENAMER © 2026</footer>
 </div>
 
 <script>
-
-const fileInput = document.getElementById("fileInput");
-const dropArea = document.getElementById("dropArea");
-const prefixInput = document.getElementById("prefix");
-const startInput = document.getElementById("start");
-const digitsInput = document.getElementById("digits");
-const zipNameInput = document.getElementById("zipName");
-const previewList = document.getElementById("previewList");
-const fileCount = document.getElementById("fileCount");
-const downloadBtn = document.getElementById("downloadBtn");
-const statusText = document.getElementById("status");
-const progressBox = document.getElementById("progressBox");
-const progressFill = document.getElementById("progressFill");
-const progressText = document.getElementById("progressText");
-
+const $ = id => document.getElementById(id);
 let files = [];
 let processing = false;
-
-/* INFO TOOLTIP */
+let currentVersion = 1;
 
 document.querySelectorAll(".info-btn").forEach(button => {
-
-    button.addEventListener("click", function(e) {
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        const tooltip = this.nextElementSibling;
-        const wasOpen = tooltip.classList.contains("show");
-
-        document.querySelectorAll(".tooltip").forEach(t => {
-            t.classList.remove("show");
-        });
-
-        document.querySelectorAll(".info-btn").forEach(b => {
-            b.classList.remove("active");
-        });
-
-        if (!wasOpen) {
-            tooltip.classList.add("show");
-            this.classList.add("active");
-        }
-
-    });
-
+ button.addEventListener("click", e => {
+  e.preventDefault();
+  e.stopPropagation();
+  const tip = button.nextElementSibling;
+  const wasOpen = tip.classList.contains("show");
+  document.querySelectorAll(".tooltip").forEach(t => t.classList.remove("show"));
+  document.querySelectorAll(".info-btn").forEach(b => b.classList.remove("active"));
+  if(!wasOpen){tip.classList.add("show");button.classList.add("active")}
+ });
+});
+document.addEventListener("click",e=>{
+ if(!e.target.closest(".info-wrap")){
+  document.querySelectorAll(".tooltip").forEach(t=>t.classList.remove("show"));
+  document.querySelectorAll(".info-btn").forEach(b=>b.classList.remove("active"));
+ }
 });
 
-document.addEventListener("click", function(e) {
+function switchVersion(v){
+ if(processing)return;
+ currentVersion=v;
+ $("version1").classList.toggle("active",v===1);
+ $("version2").classList.toggle("active",v===2);
+ $("v1Btn").classList.toggle("active",v===1);
+ $("v2Btn").classList.toggle("active",v===2);
+ $("status").textContent="";
+ updatePreview();
+}
+$("v1Btn").onclick=()=>switchVersion(1);
+$("v2Btn").onclick=()=>switchVersion(2);
 
-    if (!e.target.closest(".info-wrap")) {
+function setFiles(selected){
+ const all=Array.from(selected)
+  .filter(f=>f.name.toLowerCase().endsWith(".pdf"))
+  .sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
+ files=all.slice(0,500);
+ $("status").textContent=all.length>500?"Maximum 500 PDF files. Extra files were excluded.":"";
+ updatePreview();
+}
+$("fileInput").addEventListener("change",e=>setFiles(e.target.files));
+$("dropArea").addEventListener("dragover",e=>{e.preventDefault();$("dropArea").classList.add("drag")});
+$("dropArea").addEventListener("dragleave",()=>$("dropArea").classList.remove("drag"));
+$("dropArea").addEventListener("drop",e=>{e.preventDefault();$("dropArea").classList.remove("drag");setFiles(e.dataTransfer.files)});
 
-        document.querySelectorAll(".tooltip").forEach(t => {
-            t.classList.remove("show");
-        });
-
-        document.querySelectorAll(".info-btn").forEach(b => {
-            b.classList.remove("active");
-        });
-
-    }
-
-});
-
-/* PDF FILES */
-
-function naturalSort(a, b) {
-    return a.name.localeCompare(
-        b.name,
-        undefined,
-        { numeric: true, sensitivity: "base" }
-    );
+function numberAt(start,digits,index){
+ return String(start+index).padStart(digits,"0");
+}
+function cleanName(s){
+ return s.replace(/[<>:"/\\|?*\x00-\x1F]/g,"_").trim();
+}
+function getNewName(i){
+ if(currentVersion===1){
+  const prefix=$("prefix").value;
+  const start=Math.max(0,parseInt($("start1").value)||0);
+  const digits=Math.max(1,Math.min(10,parseInt($("digits1").value)||3));
+  return prefix+numberAt(start,digits,i)+".pdf";
+ }
+ const start=Math.max(0,parseInt($("start2").value)||0);
+ const digits=Math.max(1,Math.min(10,parseInt($("digits2").value)||2));
+ const title=cleanName($("title").value);
+ return numberAt(start,digits,i)+". "+title+".pdf";
+}
+function escapeHTML(s){
+ return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
-function setFiles(selectedFiles) {
-
-    const allFiles = Array.from(selectedFiles)
-        .filter(file => file.name.toLowerCase().endsWith(".pdf"))
-        .sort(naturalSort);
-
-    files = allFiles.slice(0, 500);
-
-    if (allFiles.length > 500) {
-        statusText.textContent =
-            "Maximum 500 PDF files. Extra files were excluded.";
-    } else {
-        statusText.textContent = "";
-    }
-
-    updatePreview();
+function updatePreview(){
+ $("fileCount").textContent=files.length+" PDF";
+ if(!files.length){
+  $("previewList").textContent="No PDF files selected.";
+  $("downloadBtn").disabled=true;
+  return;
+ }
+ let html="";
+ for(let i=0;i<Math.min(files.length,10);i++){
+  html+="<div>"+(i+1)+". "+escapeHTML(getNewName(i))+"</div>";
+ }
+ if(files.length>10)html+="<div>... and "+(files.length-10)+" more files.</div>";
+ $("previewList").innerHTML=html;
+ const valid=currentVersion===1||$("title").value.trim().length>0;
+ $("downloadBtn").disabled=processing||!valid;
+ if(currentVersion===2&&!valid)$("status").textContent="Please enter a PDF title first.";
+ else if(valid)$("status").textContent="";
 }
+["prefix","start1","digits1","start2","digits2","title"].forEach(id=>$(id).addEventListener("input",updatePreview));
 
-fileInput.addEventListener("change", function() {
-    setFiles(fileInput.files);
+$("downloadBtn").addEventListener("click",async()=>{
+ if(!files.length||processing)return;
+ if(typeof JSZip==="undefined"){
+  $("status").textContent="ZIP library failed to load. Check your internet connection.";
+  return;
+ }
+ const folderName=cleanName($("zipName").value.trim().replace(/\.zip$/i,""));
+ if(!folderName){
+  $("status").textContent="Please enter a ZIP name first.";
+  $("zipName").focus();
+  return;
+ }
+ if(currentVersion===2&&!$("title").value.trim()){
+  $("status").textContent="Please enter a PDF title first.";
+  return;
+ }
+ const names=files.map((f,i)=>getNewName(i));
+ if(new Set(names.map(n=>n.toLowerCase())).size!==names.length){
+  $("status").textContent="Duplicate filenames detected.";
+  return;
+ }
+ processing=true;
+ $("downloadBtn").disabled=true;
+ $("downloadBtn").textContent="PROCESSING...";
+ $("progressBox").style.display="block";
+ $("progressFill").style.width="0%";
+ $("status").textContent="";
+ try{
+  const zip=new JSZip();
+  const folder=zip.folder(folderName);
+  for(let i=0;i<files.length;i++){
+   folder.file(names[i],files[i]);
+   $("progressFill").style.width=Math.round((i+1)/files.length*50)+"%";
+   $("progressText").textContent="Adding PDF: "+(i+1)+" / "+files.length;
+   if(i%15===0)await new Promise(r=>setTimeout(r,0));
+  }
+  $("progressText").textContent="Creating ZIP file...";
+  const content=await zip.generateAsync({
+   type:"blob",
+   compression:"DEFLATE",
+   compressionOptions:{level:3}
+  },meta=>{
+   $("progressFill").style.width=(50+Math.round(meta.percent/2))+"%";
+   $("progressText").textContent="Creating ZIP: "+Math.round(meta.percent)+"%";
+  });
+  const url=URL.createObjectURL(content);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=folderName+".zip";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  $("progressFill").style.width="100%";
+  $("progressText").textContent="100% COMPLETED";
+  $("status").textContent="SUCCESS! "+files.length+" PDF files renamed. Downloaded: "+folderName+".zip";
+ }catch(error){
+  $("status").textContent="ERROR: "+error.message;
+ }finally{
+  processing=false;
+  $("downloadBtn").textContent="DOWNLOAD RENAMED PDF (.ZIP)";
+  updatePreview();
+ }
 });
-
-dropArea.addEventListener("dragover", function(e) {
-    e.preventDefault();
-    dropArea.classList.add("drag");
-});
-
-dropArea.addEventListener("dragleave", function() {
-    dropArea.classList.remove("drag");
-});
-
-dropArea.addEventListener("drop", function(e) {
-    e.preventDefault();
-    dropArea.classList.remove("drag");
-    setFiles(e.dataTransfer.files);
-});
-
-function getNewName(index) {
-
-    const prefix = prefixInput.value;
-    const start = Math.max(0, parseInt(startInput.value) || 0);
-
-    const digits = Math.max(1, Math.min(10,
-        parseInt(digitsInput.value) || 3
-    ));
-
-    return prefix +
-        String(start + index).padStart(digits, "0") +
-        ".pdf";
-}
-
-function escapeHTML(text) {
-    return text.replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[char]);
-}
-
-function updatePreview() {
-
-    fileCount.textContent = files.length + " PDF";
-
-    if (!files.length) {
-        previewList.textContent = "No PDF files selected.";
-        downloadBtn.disabled = true;
-        return;
-    }
-
-    downloadBtn.disabled = processing;
-
-    let html = "";
-
-    for (let i = 0; i < Math.min(files.length, 10); i++) {
-        html += `<div>${i + 1}. ${escapeHTML(getNewName(i))}</div>`;
-    }
-
-    if (files.length > 10) {
-        html += `<div>... and ${files.length - 10} more files.</div>`;
-    }
-
-    previewList.innerHTML = html;
-}
-
-prefixInput.addEventListener("input", updatePreview);
-startInput.addEventListener("input", updatePreview);
-digitsInput.addEventListener("input", updatePreview);
-
-/* DOWNLOAD ZIP */
-
-downloadBtn.addEventListener("click", async function() {
-
-    if (!files.length || processing) return;
-
-    if (typeof JSZip === "undefined") {
-        statusText.textContent =
-            "ZIP library failed to load. Check your internet connection.";
-        return;
-    }
-
-    const folderName = zipNameInput.value.trim()
-        .replace(/\.zip$/i, "")
-        .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
-
-    if (!folderName) {
-        statusText.textContent =
-            "Please enter a ZIP name before downloading.";
-        zipNameInput.focus();
-        return;
-    }
-
-    processing = true;
-    downloadBtn.disabled = true;
-    downloadBtn.textContent = "PROCESSING...";
-
-    progressBox.style.display = "block";
-    progressFill.style.width = "0%";
-    statusText.textContent = "";
-
-    try {
-
-        const zip = new JSZip();
-
-        const folder = zip.folder(folderName);
-
-        for (let i = 0; i < files.length; i++) {
-
-            folder.file(getNewName(i), files[i]);
-
-            const percent = Math.round(
-                ((i + 1) / files.length) * 50
-            );
-
-            progressFill.style.width = percent + "%";
-
-            progressText.textContent =
-                "Adding PDF: " + (i + 1) + " / " + files.length;
-
-            if (i % 15 === 0) {
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-
-        }
-
-        progressText.textContent = "Creating ZIP file...";
-
-        const content = await zip.generateAsync({
-
-            type: "blob",
-            compression: "DEFLATE",
-            compressionOptions: { level: 3 }
-
-        }, function(metadata) {
-
-            progressFill.style.width =
-                (50 + Math.round(metadata.percent / 2)) + "%";
-
-            progressText.textContent =
-                "Creating ZIP: " + Math.round(metadata.percent) + "%";
-
-        });
-
-        const url = URL.createObjectURL(content);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = folderName + ".zip";
-
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
-
-        progressFill.style.width = "100%";
-        progressText.textContent = "100% COMPLETED";
-
-        statusText.textContent =
-            "SUCCESS! " + files.length +
-            " PDF files renamed successfully. Downloaded: " +
-            folderName + ".zip";
-
-    } catch (error) {
-
-        statusText.textContent = "ERROR: " + error.message;
-
-    } finally {
-
-        processing = false;
-        downloadBtn.disabled = files.length === 0;
-        downloadBtn.textContent = "DOWNLOAD RENAMED PDF (.ZIP)";
-
-    }
-
-});
-
 </script>
-
 </body>
 </html>
