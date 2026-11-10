@@ -51,6 +51,10 @@ body {
     font-size: clamp(23px, 4vw, 30px);
     letter-spacing: 1.5px;
     margin-bottom: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
 }
 
 .header p {
@@ -104,6 +108,9 @@ body {
 }
 
 .section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 17px;
@@ -136,6 +143,10 @@ input {
 
 input:focus {
     border-color: #a98aff;
+}
+
+input::placeholder {
+    color: #73778a;
 }
 
 .hint {
@@ -174,6 +185,9 @@ input:focus {
     background: #20212b;
     font-size: 13px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 9px;
 }
 
 #previewList {
@@ -219,7 +233,7 @@ input:focus {
     transition: width .2s;
 }
 
-button {
+.download-btn {
     width: 100%;
     min-height: 54px;
     margin-top: 23px;
@@ -234,11 +248,11 @@ button {
     transition: .2s;
 }
 
-button:hover {
+.download-btn:hover {
     background: #c5afff;
 }
 
-button:disabled {
+.download-btn:disabled {
     background: #393543;
     color: #85808e;
     cursor: not-allowed;
@@ -259,6 +273,92 @@ button:disabled {
     color: #53576a;
     font-size: 10px;
     letter-spacing: 2px;
+}
+
+/* INFO BUTTON */
+
+.info-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.info-btn {
+    width: 19px;
+    height: 19px;
+    min-height: 19px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #9478cf;
+    border-radius: 50%;
+    background: transparent;
+    color: #c0a5ff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.info-btn:hover,
+.info-btn.active {
+    background: #a98aff;
+    color: #171020;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    z-index: 20;
+    width: 240px;
+    left: 50%;
+    top: calc(100% + 12px);
+    transform: translateX(-50%);
+    padding: 14px;
+    border: 1px solid #66578d;
+    border-radius: 10px;
+    background: #22202e;
+    color: #d5d1e4;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.7;
+    letter-spacing: 0;
+    text-align: left;
+    box-shadow: 0 8px 25px #0009;
+}
+
+.tooltip.show {
+    display: block;
+    animation: appear .18s ease;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -5px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.tooltip b {
+    display: block;
+    color: #c0a5ff;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.tooltip a {
+    color: #c0a5ff;
+    text-decoration: none;
+}
+
+.tooltip a:hover {
+    text-decoration: underline;
 }
 
 /* TABLET */
@@ -329,7 +429,11 @@ button:disabled {
         font-size: 12px;
     }
 
-    button {
+    .tooltip {
+        width: min(240px, 75vw);
+    }
+
+    button.download-btn {
         min-height: 54px;
     }
 }
@@ -341,14 +445,34 @@ button:disabled {
 <div class="container">
 
     <header class="header">
+
         <div class="top">P D F &nbsp; T O O L S</div>
 
-        <h1>HQRUCHYO-RENAMER</h1>
+        <h1>
+            HQRUCHYO-RENAMER
+
+            <span class="info-wrap">
+                <button class="info-btn" type="button"
+                aria-label="Informasi pembuat">i</button>
+
+                <span class="tooltip">
+                    <b>ABOUT THIS WEBSITE</b>
+                    Web ini dibuat oleh
+                    <a href="https://t.me/heilnox"
+                    target="_blank" rel="noopener">
+                    @heilnox on Telegram
+                    </a>.
+                    Terima kasih sudah menggunakan HQRUCHYO-RENAMER!
+                </span>
+            </span>
+
+        </h1>
 
         <p>
             Bulk PDF renaming tool. Rename multiple PDF files
             automatically in one simple process.
         </p>
+
     </header>
 
     <label class="upload" id="dropArea">
@@ -371,6 +495,18 @@ button:disabled {
 
         <div class="section-title">
             01 / RENAME SETTINGS
+
+            <span class="info-wrap">
+                <button class="info-btn" type="button"
+                aria-label="Rename tutorial">i</button>
+
+                <span class="tooltip">
+                    <b>RENAME TUTORIAL</b>
+                    Atur nama awal file PDF yang kamu inginkan.
+                    Contohnya, isi nama awal dengan ch untuk menghasilkan
+                    ch001, ch002, ch003, dan seterusnya.
+                </span>
+            </span>
         </div>
 
         <div class="settings">
@@ -396,27 +532,45 @@ button:disabled {
             Example: ch001.pdf, ch002.pdf, ch003.pdf...
         </p>
 
+        <p class="hint">
+            Nomor mulai menentukan urutan awal, sedangkan jumlah digit
+            menentukan panjang angka. Contoh: 3 digit = 001.
+        </p>
+
     </section>
 
     <section class="section">
 
         <div class="section-title">
             02 / ZIP FOLDER SETTINGS
+
+            <span class="info-wrap">
+                <button class="info-btn" type="button"
+                aria-label="ZIP tutorial">i</button>
+
+                <span class="tooltip">
+                    <b>ZIP TUTORIAL</b>
+                    Masukkan nama ZIP yang kamu inginkan.
+                    Misalnya, EXOPLANET. Hasil download akan bernama
+                    EXOPLANET.zip dan file PDF di dalamnya tersimpan
+                    dalam folder EXOPLANET.
+                </span>
+            </span>
         </div>
 
         <div class="field">
 
-            <label>Nama folder ZIP / nama file download</label>
+            <label>Isi nama ZIP</label>
 
             <input type="text"
             id="zipName"
-            value="EXOPLANET">
+            placeholder="Isi nama ZIP di sini...">
 
         </div>
 
         <p class="hint">
-            Nama ini akan digunakan untuk folder di dalam ZIP
-            sekaligus nama file ZIP yang didownload.
+            Nama yang kamu masukkan akan digunakan sebagai nama
+            file ZIP sekaligus folder di dalam ZIP.
         </p>
 
     </section>
@@ -429,7 +583,21 @@ button:disabled {
     <section class="preview">
 
         <div class="preview-title">
+
             03 / RENAME PREVIEW
+
+            <span class="info-wrap">
+                <button class="info-btn" type="button"
+                aria-label="Preview tutorial">i</button>
+
+                <span class="tooltip">
+                    <b>PREVIEW TUTORIAL</b>
+                    Bagian ini menampilkan contoh nama baru
+                    dari PDF yang kamu pilih. Periksa urutannya
+                    sebelum menekan tombol download.
+                </span>
+            </span>
+
         </div>
 
         <div id="previewList">
@@ -450,7 +618,7 @@ button:disabled {
 
     </div>
 
-    <button id="downloadBtn" disabled>
+    <button class="download-btn" id="downloadBtn" disabled>
         DOWNLOAD RENAMED PDF (.ZIP)
     </button>
 
@@ -480,6 +648,53 @@ const progressText = document.getElementById("progressText");
 
 let files = [];
 let processing = false;
+
+/* INFO TOOLTIP */
+
+document.querySelectorAll(".info-btn").forEach(button => {
+
+    button.addEventListener("click", function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const tooltip = this.nextElementSibling;
+        const wasOpen = tooltip.classList.contains("show");
+
+        document.querySelectorAll(".tooltip").forEach(t => {
+            t.classList.remove("show");
+        });
+
+        document.querySelectorAll(".info-btn").forEach(b => {
+            b.classList.remove("active");
+        });
+
+        if (!wasOpen) {
+            tooltip.classList.add("show");
+            this.classList.add("active");
+        }
+
+    });
+
+});
+
+document.addEventListener("click", function(e) {
+
+    if (!e.target.closest(".info-wrap")) {
+
+        document.querySelectorAll(".tooltip").forEach(t => {
+            t.classList.remove("show");
+        });
+
+        document.querySelectorAll(".info-btn").forEach(b => {
+            b.classList.remove("active");
+        });
+
+    }
+
+});
+
+/* PDF FILES */
 
 function naturalSort(a, b) {
     return a.name.localeCompare(
@@ -530,6 +745,7 @@ function getNewName(index) {
 
     const prefix = prefixInput.value;
     const start = Math.max(0, parseInt(startInput.value) || 0);
+
     const digits = Math.max(1, Math.min(10,
         parseInt(digitsInput.value) || 3
     ));
@@ -578,6 +794,8 @@ prefixInput.addEventListener("input", updatePreview);
 startInput.addEventListener("input", updatePreview);
 digitsInput.addEventListener("input", updatePreview);
 
+/* DOWNLOAD ZIP */
+
 downloadBtn.addEventListener("click", async function() {
 
     if (!files.length || processing) return;
@@ -593,7 +811,9 @@ downloadBtn.addEventListener("click", async function() {
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_");
 
     if (!folderName) {
-        statusText.textContent = "Please enter a valid ZIP folder name.";
+        statusText.textContent =
+            "Please enter a ZIP name before downloading.";
+        zipNameInput.focus();
         return;
     }
 
@@ -609,7 +829,6 @@ downloadBtn.addEventListener("click", async function() {
 
         const zip = new JSZip();
 
-        // Create named folder inside ZIP
         const folder = zip.folder(folderName);
 
         for (let i = 0; i < files.length; i++) {
@@ -628,6 +847,7 @@ downloadBtn.addEventListener("click", async function() {
             if (i % 15 === 0) {
                 await new Promise(resolve => setTimeout(resolve, 0));
             }
+
         }
 
         progressText.textContent = "Creating ZIP file...";
