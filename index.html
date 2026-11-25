@@ -56,6 +56,24 @@ input:focus{border-color:#a98aff}
 .footer{margin-top:28px;text-align:center;color:#53576a;font-size:10px;letter-spacing:2px}
 @media(max-width:768px){body{padding:25px 15px 45px}.container{padding:25px}}
 @media(max-width:500px){body{padding:12px 10px 35px}.container{padding:21px 16px;border-radius:13px}.header{margin-bottom:25px}.header h1{font-size:22px}.header p{font-size:12px}.upload{padding:35px 12px}.settings{grid-template-columns:1fr;gap:15px}input{padding:14px;font-size:14px}.section{margin-top:25px}.info{padding:15px;font-size:12px}.tooltip{width:min(240px,75vw)}}
+
+.file-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.file-tools button{padding:10px 14px;border:1px solid #665b86;border-radius:8px;background:#211e30;color:#c0a5ff;font-weight:bold;font-size:11px;cursor:pointer}
+.file-tools span{color:#858ba1;font-size:11px}
+.file-manager{margin-top:15px;border:1px solid #353746;border-radius:10px;overflow:hidden}
+.file-manager-head{display:flex;justify-content:space-between;padding:13px 15px;background:#20212b;font-size:12px}
+.file-manager-head span{color:#a98aff}
+.file-list{max-height:220px;overflow:auto;padding:8px 12px}
+.file-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 3px;border-bottom:1px solid #2c2d38;font-size:11px}
+.file-row .file-name{min-width:0;overflow-wrap:anywhere;color:#c4c6d1}
+.file-row button{padding:6px 9px;border:1px solid #65434b;border-radius:6px;background:#2a1d25;color:#ff9eaa;cursor:pointer;font-size:10px}
+.empty-list{padding:12px;color:#858ba1;font-size:12px}
+.rename-line{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #30313d}
+.rename-line .old-name{color:#858ba1;overflow-wrap:anywhere}
+.rename-line .new-name{color:#c0a5ff;overflow-wrap:anywhere}
+.rename-line .arrow{color:#777b8c}
+@media(max-width:500px){.rename-line{grid-template-columns:1fr}.rename-line .arrow{display:none}}
+
 </style>
 </head>
 <body>
@@ -78,6 +96,16 @@ input:focus{border-color:#a98aff}
  <p>Click here or drag and drop your files</p>
  <p>Supported format: PDF · Maximum 500 files</p>
  <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple>
+ </label>
+ <div class="file-tools">
+  <button type="button" id="addMoreBtn">＋ ADD MORE PDF</button>
+  <span>Tambahkan PDF satu per satu atau sekaligus.</span>
+ </div>
+ <div class="file-manager">
+  <div class="file-manager-head"><strong>PDF FILE LIST</strong><span id="listCount">0 files</span></div>
+  <div id="fileList" class="file-list"><p class="empty-list">Belum ada PDF yang dipilih.</p></div>
+ </div>
+ <label hidden>
 </label>
 
 <section class="section">
@@ -100,7 +128,7 @@ input:focus{border-color:#a98aff}
    <div class="field"><label>Nomor mulai</label><input id="start1" type="number" value="1" min="0"></div>
    <div class="field"><label>Jumlah digit</label><input id="digits1" type="number" value="3" min="1" max="10"></div>
   </div>
-  <p class="hint">Example: ch001.pdf, ch002.pdf, ch003.pdf...</p>
+  <p class="hint">File diurutkan berdasarkan angka pada nama aslinya. Kosongkan Nomor mulai untuk memakai angka terkecil yang ditemukan, lalu nomor berikutnya berurutan.</p>
  </div>
 
  <div class="version-settings" id="version2">
@@ -198,18 +226,46 @@ function switchVersion(v){
 $("v1Btn").onclick=()=>switchVersion(1);
 $("v2Btn").onclick=()=>switchVersion(2);
 
-function setFiles(selected){
- const all=Array.from(selected)
-  .filter(f=>f.name.toLowerCase().endsWith(".pdf"))
-  .sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
- files=all.slice(0,500);
- $("status").textContent=all.length>500?"Maximum 500 PDF files. Extra files were excluded.":"";
- updatePreview();
+function firstNumber(name){
+  const match=name.match(/\d+/);
+  return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
 }
-$("fileInput").addEventListener("change",e=>setFiles(e.target.files));
+function sortFiles(){
+  files.sort((a,b)=>{
+    const na=firstNumber(a.name), nb=firstNumber(b.name);
+    if(na!==nb)return na-nb;
+    return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"});
+  });
+}
+function addFiles(selected){
+  const incoming=Array.from(selected).filter(f=>f.name.toLowerCase().endsWith(".pdf"));
+  let added=0;
+  for(const file of incoming){
+    const duplicate=files.some(existing=>existing.name===file.name && existing.size===file.size && existing.lastModified===file.lastModified);
+    if(!duplicate && files.length<500){files.push(file);added++;}
+  }
+  sortFiles();
+  $("status").textContent=incoming.length>added
+    ? (files.length>=500 ? "Maksimal 500 PDF. Sebagian file tidak ditambahkan." : "File duplikat dilewati.")
+    : "";
+  updatePreview();
+}
+function removeFile(index){
+  if(processing)return;
+  files.splice(index,1);
+  updatePreview();
+}
+window.removeFile=removeFile;
+$("fileInput").addEventListener("change",e=>{
+  addFiles(e.target.files);
+  e.target.value="";
+});
+$("addMoreBtn").addEventListener("click",()=>$("fileInput").click());
 $("dropArea").addEventListener("dragover",e=>{e.preventDefault();$("dropArea").classList.add("drag")});
 $("dropArea").addEventListener("dragleave",()=>$("dropArea").classList.remove("drag"));
-$("dropArea").addEventListener("drop",e=>{e.preventDefault();$("dropArea").classList.remove("drag");setFiles(e.dataTransfer.files)});
+$("dropArea").addEventListener("drop",e=>{
+  e.preventDefault();$("dropArea").classList.remove("drag");addFiles(e.dataTransfer.files);
+});
 
 function numberAt(start,digits,index){
  return String(start+index).padStart(digits,"0");
@@ -217,10 +273,15 @@ function numberAt(start,digits,index){
 function cleanName(s){
  return s.replace(/[<>:"/\\|?*\x00-\x1F]/g,"_").trim();
 }
+function getAutoStart(){
+  const nums=files.map(f=>firstNumber(f.name)).filter(Number.isFinite);
+  return nums.length ? Math.min(...nums) : 1;
+}
 function getNewName(i){
  if(currentVersion===1){
   const prefix=$("prefix").value;
-  const start=Math.max(0,parseInt($("start1").value)||0);
+  const manual=$("start1").value.trim();
+   const start=manual==="" ? getAutoStart() : Math.max(0,parseInt(manual)||0);
   const digits=Math.max(1,Math.min(10,parseInt($("digits1").value)||3));
   return prefix+numberAt(start,digits,i)+".pdf";
  }
@@ -234,22 +295,26 @@ function escapeHTML(s){
 }
 
 function updatePreview(){
- $("fileCount").textContent=files.length+" PDF";
- if(!files.length){
-  $("previewList").textContent="No PDF files selected.";
-  $("downloadBtn").disabled=true;
-  return;
- }
- let html="";
- for(let i=0;i<Math.min(files.length,10);i++){
-  html+="<div>"+(i+1)+". "+escapeHTML(getNewName(i))+"</div>";
- }
- if(files.length>10)html+="<div>... and "+(files.length-10)+" more files.</div>";
- $("previewList").innerHTML=html;
- const valid=currentVersion===1||$("title").value.trim().length>0;
- $("downloadBtn").disabled=processing||!valid;
- if(currentVersion===2&&!valid)$("status").textContent="Please enter a PDF title first.";
- else if(valid)$("status").textContent="";
+  $("fileCount").textContent=files.length+" PDF";
+  $("listCount").textContent=files.length+" files";
+  if(!files.length){
+   $("previewList").textContent="No PDF files selected.";
+   $("fileList").innerHTML='<p class="empty-list">Belum ada PDF yang dipilih.</p>';
+   $("downloadBtn").disabled=true;
+   return;
+  }
+  $("fileList").innerHTML=files.map((f,i)=>
+    '<div class="file-row"><span class="file-name">'+(i+1)+'. '+escapeHTML(f.name)+'</span><button type="button" onclick="removeFile('+i+')">REMOVE</button></div>'
+  ).join("");
+  let html="";
+  for(let i=0;i<files.length;i++){
+   html+='<div class="rename-line"><span class="old-name">'+escapeHTML(files[i].name)+'</span><span class="arrow">→</span><span class="new-name">'+escapeHTML(getNewName(i))+'</span></div>';
+  }
+  $("previewList").innerHTML=html;
+  const valid=currentVersion===1||$("title").value.trim().length>0;
+  $("downloadBtn").disabled=processing||!valid;
+  if(currentVersion===2&&!valid)$("status").textContent="Please enter a PDF title first.";
+  else if(valid)$("status").textContent="";
 }
 ["prefix","start1","digits1","start2","digits2","title"].forEach(id=>$(id).addEventListener("input",updatePreview));
 
