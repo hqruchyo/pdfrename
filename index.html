@@ -6,7 +6,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090909">
 <title>HQRUCHYO-RENAMER</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+
+
+
+$("pdfDownloadBtn").addEventListener("click",async()=>{
+  if(!files.length||processing)return;
+  processing=true;
+  $("downloadBtn").disabled=true;
+  $("pdfDownloadBtn").disabled=true;
+  $("pdfDownloadBtn").textContent="PREPARING PDF...";
+  $("progressBox").style.display="block";
+  $("progressFill").style.width="0%";
+  try{
+    for(let i=0;i<files.length;i++){
+      const url=URL.createObjectURL(files[i]);
+      const link=document.createElement("a");
+      link.href=url;
+      link.download=getNewName(i);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      $("progressFill").style.width=Math.round((i+1)/files.length*100)+"%";
+      $("progressText").textContent="Preparing PDF download: "+(i+1)+" / "+files.length;
+      await new Promise(resolve=>setTimeout(resolve,350));
+    }
+    $("progressText").textContent="100% COMPLETED";
+    $("status").textContent="SUCCESS! "+files.length+" PDF files sent as individual downloads. If Chrome asks, allow multiple downloads.";
+  }catch(error){
+    $("status").textContent="PDF DOWNLOAD ERROR: "+error.message;
+  }finally{
+    processing=false;
+    $("pdfDownloadBtn").textContent="DOWNLOAD PDF (TANPA ZIP)";
+    updatePreview();
+  }
+});
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#090909;color:#f2f2f5;font-family:Arial,sans-serif;min-height:100vh;padding:38px 18px 65px}
@@ -74,6 +111,17 @@ input:focus{border-color:#a98aff}
 .rename-line .arrow{color:#777b8c}
 @media(max-width:500px){.rename-line{grid-template-columns:1fr}.rename-line .arrow{display:none}}
 
+
+.list-actions{display:flex;align-items:center;gap:10px}
+.list-actions button{padding:6px 9px;border:1px solid #65434b;border-radius:6px;background:#2a1d25;color:#ff9eaa;cursor:pointer;font-size:10px;font-weight:bold}
+.file-row{grid-template-columns:minmax(0,1fr) minmax(125px,190px) auto}
+.file-row input{padding:8px 9px;font-size:11px;border-radius:7px}
+.custom-label{display:block;color:#858ba1;font-size:9px;margin-bottom:4px}
+.download-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:23px}
+.download-actions .download-btn{margin-top:0}
+.folder-btn{background:#252332;color:#c0a5ff;border:1px solid #665b86}
+@media(max-width:520px){.file-row{grid-template-columns:minmax(0,1fr) auto}.file-row .custom-wrap{grid-column:1/-1;grid-row:2}.download-actions{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -102,7 +150,7 @@ input:focus{border-color:#a98aff}
   <span>Tambahkan PDF satu per satu atau sekaligus.</span>
  </div>
  <div class="file-manager">
-  <div class="file-manager-head"><strong>PDF FILE LIST</strong><span id="listCount">0 files</span></div>
+  <div class="file-manager-head"><strong>PDF FILE LIST</strong><div class="list-actions"><span id="listCount">0 files</span><button type="button" id="removeAllBtn">REMOVE ALL</button></div></div>
   <div id="fileList" class="file-list"><p class="empty-list">Belum ada PDF yang dipilih.</p></div>
  </div>
  <label hidden>
@@ -184,7 +232,7 @@ input:focus{border-color:#a98aff}
  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 </div>
 
-<button class="download-btn" id="downloadBtn" disabled>DOWNLOAD RENAMED PDF (.ZIP)</button>
+<div class="download-actions"><button class="download-btn" id="downloadBtn" disabled>DOWNLOAD ZIP</button><button class="download-btn folder-btn" id="pdfDownloadBtn" disabled>DOWNLOAD PDF (TANPA ZIP)</button></div>
 <p id="status"></p>
 <footer class="footer">HQRUCHYO-RENAMER © 2026</footer>
 </div>
@@ -194,6 +242,7 @@ const $ = id => document.getElementById(id);
 let files = [];
 let processing = false;
 let currentVersion = 1;
+let customNames = new Map();
 
 document.querySelectorAll(".info-btn").forEach(button => {
  button.addEventListener("click", e => {
@@ -250,17 +299,37 @@ function addFiles(selected){
     : "";
   updatePreview();
 }
+function fileKey(file){return file.name+"::"+file.size+"::"+file.lastModified;}
 function removeFile(index){
   if(processing)return;
+  customNames.delete(fileKey(files[index]));
   files.splice(index,1);
   updatePreview();
 }
+function removeAllFiles(){
+  if(processing)return;
+  files=[];
+  customNames.clear();
+  $("fileInput").value="";
+  $("status").textContent="All PDF files removed.";
+  updatePreview();
+}
+function setCustomName(index,value){
+  const file=files[index];
+  if(!file)return;
+  const key=fileKey(file);
+  if(value.trim())customNames.set(key,cleanName(value.trim()));
+  else customNames.delete(key);
+  updatePreview(false);
+}
 window.removeFile=removeFile;
+window.setCustomName=setCustomName;
 $("fileInput").addEventListener("change",e=>{
   addFiles(e.target.files);
   e.target.value="";
 });
 $("addMoreBtn").addEventListener("click",()=>$("fileInput").click());
+$("removeAllBtn").addEventListener("click",removeAllFiles);
 $("dropArea").addEventListener("dragover",e=>{e.preventDefault();$("dropArea").classList.add("drag")});
 $("dropArea").addEventListener("dragleave",()=>$("dropArea").classList.remove("drag"));
 $("dropArea").addEventListener("drop",e=>{
@@ -294,18 +363,20 @@ function escapeHTML(s){
  return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
-function updatePreview(){
+function updatePreview(refreshInputs=true){
   $("fileCount").textContent=files.length+" PDF";
   $("listCount").textContent=files.length+" files";
   if(!files.length){
    $("previewList").textContent="No PDF files selected.";
    $("fileList").innerHTML='<p class="empty-list">Belum ada PDF yang dipilih.</p>';
    $("downloadBtn").disabled=true;
+   $("pdfDownloadBtn").disabled=true;
    return;
   }
-  $("fileList").innerHTML=files.map((f,i)=>
-    '<div class="file-row"><span class="file-name">'+(i+1)+'. '+escapeHTML(f.name)+'</span><button type="button" onclick="removeFile('+i+')">REMOVE</button></div>'
-  ).join("");
+  if(refreshInputs) $("fileList").innerHTML=files.map((f,i)=>{
+    const custom=customNames.get(fileKey(f))||"";
+    return '<div class="file-row"><span class="file-name">'+(i+1)+'. '+escapeHTML(f.name)+'</span><div class="custom-wrap"><span class="custom-label">CUSTOM NAME (OPTIONAL)</span><input type="text" value="'+escapeHTML(custom)+'" placeholder="Use automatic name" oninput="setCustomName('+i+',this.value)"></div><button type="button" onclick="removeFile('+i+')">REMOVE</button></div>';
+  }).join("");
   let html="";
   for(let i=0;i<files.length;i++){
    html+='<div class="rename-line"><span class="old-name">'+escapeHTML(files[i].name)+'</span><span class="arrow">→</span><span class="new-name">'+escapeHTML(getNewName(i))+'</span></div>';
@@ -313,6 +384,7 @@ function updatePreview(){
   $("previewList").innerHTML=html;
   const valid=currentVersion===1||$("title").value.trim().length>0;
   $("downloadBtn").disabled=processing||!valid;
+  $("pdfDownloadBtn").disabled=processing||!valid;
   if(currentVersion===2&&!valid)$("status").textContent="Please enter a PDF title first.";
   else if(valid)$("status").textContent="";
 }
@@ -378,7 +450,7 @@ $("downloadBtn").addEventListener("click",async()=>{
   $("status").textContent="ERROR: "+error.message;
  }finally{
   processing=false;
-  $("downloadBtn").textContent="DOWNLOAD RENAMED PDF (.ZIP)";
+  $("downloadBtn").textContent="DOWNLOAD ZIP";
   updatePreview();
  }
 });
